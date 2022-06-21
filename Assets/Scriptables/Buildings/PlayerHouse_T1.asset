@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 919097838e822324f9f54783eeb58e72, type: 3}
+  m_Name: PlayerHouse_T1
+  m_EditorClassIdentifier: 
+  _name: House
+  _description: Basic house. Max Population +5
+  _costToBuild: {x: 5, y: 10, z: 50}
+  _maxHealth: 100
+  _buildTime: 30
+  _buildingEffects:
+  - {fileID: 11400000, guid: 107ff3a6a3b48be4a9507294e8553f62, type: 2}
+  - {fileID: 11400000, guid: 1892b5a31b55b02409bba879473f1863, type: 2}

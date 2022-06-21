@@ -14,6 +14,12 @@ public class CameraController : MonoBehaviour
     private float _hInput;
     private float _vInput;
     private bool _moveInputPressed => _hInput != 0f || _vInput != 0f;
+    [SerializeField]
+    private KeyCode _cameraAcceleratorButton = KeyCode.LeftShift;
+    [SerializeField]
+    [Range(0.1f, 5f)]
+    private float _accelerationMultiplier = 2f;
+    private bool _acceleratorOn => Input.GetKey(_cameraAcceleratorButton);
 
     [SerializeField]
     [Range(0.1f, 200f)]
@@ -22,8 +28,8 @@ public class CameraController : MonoBehaviour
     [Tooltip("Measurement in pixels how close the cursor has to be to trigger mouse panning")]
     [Range(1f, 20f)]
     private float _panBorderThreshold = 10f;
-    private bool _cursorAtPanBorder = false;
     [SerializeField]
+    [Tooltip("The border in this context holds the min and max values for both horizontal movement(x) and vertical movement(y).")]
     private Vector2 _cameraBorderLimit = Vector2.zero;
 
     private void Awake()
@@ -34,7 +40,7 @@ public class CameraController : MonoBehaviour
         {
             _cameraBorderLimit = new Vector2(200, 200);
             Debug.LogWarning("Camera bounds were not defined in the inspector for CameraController." +
-                "\nUsing default value of 200 units.");
+                "\nUsing default value of x = 200, y = 200.");
         }
     }
 
@@ -46,7 +52,7 @@ public class CameraController : MonoBehaviour
         //KeyPress takes precedent over mouse panning.
         if (_moveInputPressed)
         {
-            ThisTransform.Translate(InputMovement());
+            ThisTransform.Translate(KeyPressMovement());
         }
         else
         {
@@ -56,14 +62,24 @@ public class CameraController : MonoBehaviour
         ThisTransform.position = ClampToBorder(_cameraBorderLimit, ThisTransform.position);
     }
 
-    private Vector3 InputMovement()
+    private Vector3 KeyPressMovement()
     {
-        Vector3 direction = new Vector3(_hInput, 0f, _vInput) * _panSpeed * Time.deltaTime;
+        float acceleration = 1f;
+        if (_acceleratorOn)
+        {
+            acceleration = _accelerationMultiplier;
+        }
+        Vector3 direction = new Vector3(_hInput, 0f, _vInput) * _panSpeed * acceleration * Time.deltaTime;
         return direction;
     }
 
     private Vector3 MousePanMovement(Vector3 mousePosition)
     {
+        float acceleration = 1f;
+        if (_acceleratorOn)
+        {
+            acceleration = _accelerationMultiplier;
+        }
         Vector3 direction = Vector3.zero;
         if (mousePosition.y >= Screen.height - _panBorderThreshold)
         {
@@ -81,13 +97,12 @@ public class CameraController : MonoBehaviour
         {
             direction = Vector3.left;
         }
-        return direction * _panSpeed * Time.deltaTime;
+        return direction * _panSpeed * acceleration * Time.deltaTime;
     }
 
     private Vector3 ClampToBorder(Vector2 border, Vector3 objectPosition)
     {
         Vector3 clampedPosition = objectPosition;
-        //The border in this context holds the min and max values for both horizontal movement(x) and vertical movement(y).
         clampedPosition.x = Mathf.Clamp(clampedPosition.x, -border.x, border.x);
         clampedPosition.z = Mathf.Clamp(clampedPosition.z, -border.y, border.y);
         return clampedPosition;
