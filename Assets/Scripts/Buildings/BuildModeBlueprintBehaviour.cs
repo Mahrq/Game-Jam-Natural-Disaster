@@ -7,39 +7,53 @@ using UnityEngine;
 /// This object should be on the Structure layer so it can do collision checks with other
 /// building objects.
 /// </summary>
-public class BuildModeBlueprintBehaviour : MonoBehaviour
+public class BuildModeBlueprintBehaviour : MonoBehaviour, IMapableUI<Vector3>
 {
     [Header("Must Assign")]
     [SerializeField]
     private BuildingProperties _buildingProperties;
     private bool _buildingEffectActivated = false;
     private BuildingMaterialHandler _buildingMaterialHandler;
+    private BuildingDamageHandler _damageHandler;
     private PlayerData _playerData;
     [SerializeField]
     [Tooltip("For buildings already active in the scene select 'Done'")]
-    private BuildingStage _startingStage = BuildingStage.Initialise;
+    private BuildingStage _startingStage = BuildingStage.Preparing;
     [SerializeField]
     private BuildingStage _currentStage;
     private bool _canBuild;
     private bool _isColliding;
     private Transform _thistransform;
     private float _currentBuildTimer = 0f;
+    [SerializeField]
+    [Range(1, 60)]
+    [Tooltip("Time in frames when the next Value Changed interval is called.")]
+    private int _valueChangedEventSendInterval = 5;
+    private Vector3 _progressBarMapData;
+
+    public event IMapableUI<Vector3>.MapToUIDelegate OnValueChanged;
+    public event System.Action OnInitialise;
+    public event System.Action<bool> OnSelectionChanged;
+    private bool _isSelected = false;
     private void Awake()
     {
         _buildingMaterialHandler = this.GetComponent<BuildingMaterialHandler>();
+        _damageHandler = this.GetComponent<BuildingDamageHandler>();
         _playerData = FindObjectOfType<PlayerData>();
         _thistransform = this.GetComponent<Transform>();
     }
 
     private void Start()
     {
-         if (_startingStage != BuildingStage.Done)
+        if (_startingStage != BuildingStage.Initialise)
         {
-            CurrentStage = BuildingStage.Initialise;
+            CurrentStage = BuildingStage.Preparing;
         }
         else
         {
-            CurrentStage = BuildingStage.Done;
+            _currentBuildTimer = _buildingProperties.BuildTime;
+            _progressBarMapData = new Vector3(_currentBuildTimer, 0, _buildingProperties.BuildTime);
+            CurrentStage = BuildingStage.Initialise;
         }
     }
 
@@ -48,6 +62,10 @@ public class BuildModeBlueprintBehaviour : MonoBehaviour
         if (_buildingEffectActivated)
         {
             RemoveBuildingEffects();
+        }
+        if (CurrentStage == BuildingStage.Initialise)
+        {
+            _damageHandler.OnDeath -= OnDeathCallback;
         }
     }
     private void Update()
@@ -70,11 +88,19 @@ public class BuildModeBlueprintBehaviour : MonoBehaviour
                 if (BuildComplete())
                 {
                     ReturnWorkers();
-                    CurrentStage = BuildingStage.Done;
+                    CurrentStage = BuildingStage.Initialise;
                 }
                 break;
             default:
                 break;
+        }
+        if (Time.frameCount % _valueChangedEventSendInterval == 0)
+        {
+            if (OnValueChanged != null)
+            {
+                _progressBarMapData = new Vector3(_currentBuildTimer, 0, _buildingProperties.BuildTime);
+                OnValueChanged(_progressBarMapData);
+            }
         }
     }
     //Objects on the Structure layer can only collide with eachother,
@@ -138,10 +164,20 @@ public class BuildModeBlueprintBehaviour : MonoBehaviour
             for (int i = 0; i < _buildingProperties.BuildingEffects.Length; i++)
             {
                 currentEffect = _buildingProperties.BuildingEffects[i];
-                currentEffect.RemoveEffect(ref _playerData);
+                //Non recuring effects are removed while recurring ones no longer apply
+                //becuase the coroutine has stopped.
+                if (!currentEffect.RecursValue)
+                {
+                    currentEffect.RemoveEffect(ref _playerData);
+                }
             }
             _buildingEffectActivated = false;
         }
+    }
+    private void OnDeathCallback()
+    {
+        //TODO: special FX for death otherwise it's same as normal destruction;
+        Destroy(this.gameObject);
     }
     public void SetPosition(Vector3 position)
     {
@@ -181,12 +217,12 @@ public class BuildModeBlueprintBehaviour : MonoBehaviour
         {
             return _currentStage;
         }
-        set
+        private set
         {
             _currentStage = value;
             switch (_currentStage)
             {
-                case BuildingStage.Initialise:
+                case BuildingStage.Preparing:
                     if (CanBuild)
                     {
                         _buildingMaterialHandler.ApplyMaterial(BuildingMaterialHandler.BuildingState.AllowedToBuild);
@@ -201,9 +237,11 @@ public class BuildModeBlueprintBehaviour : MonoBehaviour
                     _currentBuildTimer = 0f;
                     _buildingMaterialHandler.ApplyMaterial(BuildingMaterialHandler.BuildingState.InProgress);
                     break;
-                case BuildingStage.Done:
+                case BuildingStage.Initialise:
                     _buildingMaterialHandler.ApplyMaterial(BuildingMaterialHandler.BuildingState.Default);
                     ApplyBuildingEffects();
+                    _damageHandler.OnDeath += OnDeathCallback;
+                    OnInitialise?.Invoke();
                     break;
                 default:
                     break;
@@ -218,6 +256,29 @@ public class BuildModeBlueprintBehaviour : MonoBehaviour
             return _canBuild;
         }
     }
+    public bool IsSelected
+    {
+        get
+        {
+            return _isSelected;
+        }
+        set
+        {
+            _isSelected = value;
+            OnSelectionChanged?.Invoke(_isSelected);
+        }
+    }
+    public BuildingProperties BuildProperties
+    {
+        get
+        {
+            if (_buildingProperties == null)
+            {
+                _buildingProperties = this.GetComponent<BuildingProperties>();
+            }
+            return _buildingProperties;
+        }
+    }
     public Transform ThisTransform
     {
         get
@@ -229,11 +290,12 @@ public class BuildModeBlueprintBehaviour : MonoBehaviour
             return _thistransform;
         }
     }
+
     public enum BuildingStage
     {
-        Initialise,
+        Preparing,
         Moving,
         Building,
-        Done
+        Initialise
     }
 }

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Extensions;
 /// <summary>
 /// Handles various inputs and the game state of the player controller.
 /// </summary>
@@ -11,33 +12,35 @@ public class PlayerController : MonoBehaviour
     private ControllerState _state = ControllerState.Free;
     private PrefabHolder _prefabHolder;
     private BuildModeBlueprintBehaviour _selectedObjectToBuild;
+    private BuildModeBlueprintBehaviour _selectedBuilding;
     
     [SerializeField]
     private float _rayCastLength = 10000f;
+    private Ray ray;
     private RaycastHit _rayHit;
     Vector3 hitResult = Vector3.zero;
-    [SerializeField]
-    private LayerMask _rayHitMask;
-
+    private int _hitmask;
     private void Awake()
     {
         _prefabHolder = FindObjectOfType<PrefabHolder>();
+
+        _hitmask = LayerMask.GetMask("Structure");
     }
 
     private void Update()
     {
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        if (Physics.Raycast(ray, out _rayHit, _rayCastLength, _rayHitMask))
-        {
-            hitResult = _rayHit.point;
-            Debug.Log($"Ray Hit Point:{hitResult}");
-        }
+        ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         Debug.DrawRay(ray.origin, ray.direction * _rayCastLength, Color.red);
+        hitResult = CursorToWorldSpace(ray, hitResult);
         switch (State)
         {
             case ControllerState.Free:
                 if (Input.GetKeyUp(_houseShortcut))
                 {
+                    //Pre-emptivly change the layermask and recast the raycast so that when the blueprint spawns
+                    //it won't jump from the last valid raycast result on the floor layer.
+                    _hitmask = LayerMask.GetMask("Floor");
+                    hitResult = CursorToWorldSpace(ray, hitResult);
                     SetObjectToBuild(PrefabHolder.Item.PlayerHouse, hitResult);
                 }
                 Debug.Log($"Ray Hit Point:{hitResult}" +
@@ -71,6 +74,23 @@ public class PlayerController : MonoBehaviour
                 break;
             case ControllerState.MenuMode:
                 break;
+            case ControllerState.HasSelection:
+                if (_selectedBuilding != null)
+                {
+                    //Clicking the left mouse down while having a selection will attempt to deselect the chosen building.
+                    //if the cursor is over a selectable building, it will reselect it on mouseclick up. 
+                    if (Input.GetMouseButtonDown(0))
+                    {
+                        _selectedBuilding.IsSelected = false;
+                        _selectedBuilding = null;
+                        State = ControllerState.Free;
+                    }
+                }
+                else
+                {
+                    State = ControllerState.Free;
+                }
+                break;
             default:
                 break;
         }
@@ -94,11 +114,32 @@ public class PlayerController : MonoBehaviour
             }
         }
     }
+    //Delta position used as a default result if the ray cast fails.
+    private Vector3 CursorToWorldSpace(Ray ray, Vector3 deltaPosition)
+    {
+        Vector3 result = deltaPosition;
+        if (Physics.Raycast(ray, out _rayHit, _rayCastLength, _hitmask))
+        {
+            result = _rayHit.point;
+        }
+        return result;
+    }
+
+    public BuildModeBlueprintBehaviour SelectedBuilding
+    {
+        set
+        {
+            _selectedBuilding = value;
+            _selectedBuilding.IsSelected = true;
+            State = ControllerState.HasSelection;
+        }
+    }
     public enum ControllerState
     {
         Free,
         BuildMode,
-        MenuMode
+        MenuMode,
+        HasSelection
     }
 
     public ControllerState State
@@ -107,9 +148,26 @@ public class PlayerController : MonoBehaviour
         {
             return _state;
         }
-        set
+        private set
         {
             _state = value;
+            switch (_state)
+            {
+                case ControllerState.Free:
+                    _hitmask = LayerMask.GetMask("Structure");
+                    break;
+                case ControllerState.BuildMode:
+                    break;
+                case ControllerState.MenuMode:
+                    //Prevent casting on buildings while in menu mode.
+                    _hitmask = LayerMask.GetMask("Floor");
+                    break;
+                case ControllerState.HasSelection:
+                    _hitmask = LayerMask.GetMask("Structure");
+                    break;
+                default:
+                    break;
+            }
         }
     }
 }
