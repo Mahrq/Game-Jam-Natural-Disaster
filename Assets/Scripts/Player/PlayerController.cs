@@ -5,10 +5,12 @@ using Extensions;
 /// <summary>
 /// Handles various inputs and the game state of the player controller.
 /// </summary>
-public class PlayerController : MonoBehaviour
+public class PlayerController : MonoBehaviour, IMapableUI<BuildModeBlueprintBehaviour>
 {
     [SerializeField]
     private KeyCode _houseShortcut = KeyCode.Alpha1;
+    [SerializeField]
+    private KeyCode _townCenterShortCut = KeyCode.T;
     private ControllerState _state = ControllerState.Free;
     private PrefabHolder _prefabHolder;
     private BuildModeBlueprintBehaviour _selectedObjectToBuild;
@@ -20,13 +22,16 @@ public class PlayerController : MonoBehaviour
     private RaycastHit _rayHit;
     Vector3 hitResult = Vector3.zero;
     private int _hitmask;
+
+    public event IMapableUI<BuildModeBlueprintBehaviour>.MapToUIDelegate OnValueChanged;
+    public event System.Action OnDeselectedBuilding;
+
     private void Awake()
     {
         _prefabHolder = FindObjectOfType<PrefabHolder>();
 
         _hitmask = LayerMask.GetMask("Structure");
     }
-
     private void Update()
     {
         ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -43,15 +48,17 @@ public class PlayerController : MonoBehaviour
                     hitResult = CursorToWorldSpace(ray, hitResult);
                     SetObjectToBuild(PrefabHolder.Item.PlayerHouse, hitResult);
                 }
-                Debug.Log($"Ray Hit Point:{hitResult}" +
-                    $"\nFree Mode");
+                else if (Input.GetKeyUp(_townCenterShortCut))
+                {
+                    _hitmask = LayerMask.GetMask("Floor");
+                    hitResult = CursorToWorldSpace(ray, hitResult);
+                    SetObjectToBuild(PrefabHolder.Item.TownCenter, hitResult);
+                }
                 break;
             case ControllerState.BuildMode:
                 if (_selectedObjectToBuild != null)
                 {
                     _selectedObjectToBuild.SetPosition(hitResult);
-                    Debug.Log($"Ray Hit Point:{hitResult}" +
-                        $"\nBuild Mode");
                     //Confirm build position with left click
                     if (Input.GetMouseButtonUp(0))
                     {
@@ -83,6 +90,7 @@ public class PlayerController : MonoBehaviour
                     {
                         _selectedBuilding.IsSelected = false;
                         _selectedBuilding = null;
+                        OnDeselectedBuilding?.Invoke();
                         State = ControllerState.Free;
                     }
                 }
@@ -124,13 +132,13 @@ public class PlayerController : MonoBehaviour
         }
         return result;
     }
-
     public BuildModeBlueprintBehaviour SelectedBuilding
     {
         set
         {
             _selectedBuilding = value;
             _selectedBuilding.IsSelected = true;
+            OnValueChanged?.Invoke(_selectedBuilding);
             State = ControllerState.HasSelection;
         }
     }
@@ -141,7 +149,6 @@ public class PlayerController : MonoBehaviour
         MenuMode,
         HasSelection
     }
-
     public ControllerState State
     {
         get

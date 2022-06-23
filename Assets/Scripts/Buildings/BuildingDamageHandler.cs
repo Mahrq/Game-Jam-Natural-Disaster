@@ -26,6 +26,15 @@ public class BuildingDamageHandler : MonoBehaviour, IDamageable, IMapableUI<Vect
     {
         _blueprint.OnInitialise -= OnInitialiseCallback;
     }
+    //Test Damage
+    //private void Update()
+    //{
+    //    if (Time.frameCount % 60 == 0)
+    //    {
+    //        ModifyHealth(-5);
+    //        Debug.Log("Health Subtracted");
+    //    }
+    //}
     private void OnInitialiseCallback()
     {
         _currentHealth = _properties.MaxHealth;
@@ -45,4 +54,6 @@ public class BuildingDamageHandler : MonoBehaviour, IDamageable, IMapableUI<Vect
             OnDeath?.Invoke();
         }
     }
+
+    public int CurrentHealth => _currentHealth;
 }

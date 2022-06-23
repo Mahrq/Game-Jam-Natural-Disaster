@@ -46,6 +46,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _prefabCollection:
   - {fileID: 6291933597160426400, guid: b785182ef59b66d42b4beec453e6faa2, type: 3}
+  - {fileID: 2087100577768051024, guid: f6e080daf1c2f2743ae10d9ec4c577fd, type: 3}
 --- !u!1 &7671137666917218301
 GameObject:
   m_ObjectHideFlags: 0
@@ -99,6 +100,7 @@ MonoBehaviour:
   _money: 200
   _buildMaterials: 200
   _food: 200
+  _resourceCap: 99999
 --- !u!114 &7671137666917218299
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -112,10 +114,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _houseShortcut: 49
+  _townCenterShortCut: 116
   _rayCastLength: 10000
-  _rayHitMask:
-    serializedVersion: 2
-    m_Bits: 128
 --- !u!1 &7671137667802649869
 GameObject:
   m_ObjectHideFlags: 0
@@ -175,4 +175,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7244cb968e9439e4c949ea2742a620b2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _defaultLoad: 0
+  _defaultLoad: 1

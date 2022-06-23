@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Extensions;
 /// <summary>
-/// Behaviour for mapping the current building information to various UI elements.
+/// Behaviour for mapping the current building information to world UI elements.
 /// </summary>
 public class BuildingInfoUI : MonoBehaviour
 {

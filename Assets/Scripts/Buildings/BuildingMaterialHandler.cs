@@ -7,6 +7,8 @@ using UnityEngine;
 public class BuildingMaterialHandler : MonoBehaviour
 {
     [SerializeField]
+    private Material[] _materialBuildModeStates;
+    [SerializeField]
     private Material[] _materialCollection;
     private MeshRenderer[] _meshRenderers;
 
@@ -37,11 +39,36 @@ public class BuildingMaterialHandler : MonoBehaviour
     //}
     public void ApplyMaterial(BuildingState newState)
     {
-        Material newMaterial = _materialCollection[(int)newState];
-        for (int i = 0; i < _meshRenderers.Length; i++)
+        //Some models within the collection that makes up the building uses a different texture map.
+        if (newState == BuildingState.Default)
         {
-            _meshRenderers[i].material = newMaterial;
+            Material[] newMaterials = _materialCollection;
+            string tag = "";
+            for (int i = 0; i < _meshRenderers.Length; i++)
+            {
+                tag = _meshRenderers[i].gameObject.tag;
+                switch (tag)
+                {
+                    case "Atlas1":
+                        _meshRenderers[i].material = newMaterials[(int)TextureMaps.Atlas1];
+                        break;
+                    case "Atlas2":
+                        _meshRenderers[i].material = newMaterials[(int)TextureMaps.Atlas2];
+                        break;                                               
+                    default:
+                        break;
+                }              
+            }
         }
+        else
+        {
+            Material newMaterial = _materialBuildModeStates[(int)newState - 1];
+            for (int i = 0; i < _meshRenderers.Length; i++)
+            {
+                _meshRenderers[i].material = newMaterial;
+            }
+        }
+
     }
     public enum BuildingState
     {
@@ -49,5 +76,11 @@ public class BuildingMaterialHandler : MonoBehaviour
         AllowedToBuild,
         InProgress,
         Error
+    }
+
+    private enum TextureMaps
+    {
+        Atlas1,
+        Atlas2
     }
 }

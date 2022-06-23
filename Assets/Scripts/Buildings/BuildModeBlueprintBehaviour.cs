@@ -290,7 +290,17 @@ public class BuildModeBlueprintBehaviour : MonoBehaviour, IMapableUI<Vector3>
             return _thistransform;
         }
     }
-
+    public BuildingDamageHandler DamageHandler
+    {
+        get
+        {
+            if (_damageHandler == null)
+            {
+                _damageHandler = this.GetComponent<BuildingDamageHandler>();
+            }
+            return _damageHandler;
+        }
+    }
     public enum BuildingStage
     {
         Preparing,

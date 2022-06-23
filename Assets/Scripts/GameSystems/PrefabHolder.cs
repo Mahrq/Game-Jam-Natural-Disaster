@@ -16,6 +16,7 @@ public class PrefabHolder : MonoBehaviour
 
     public enum Item
     {
-        PlayerHouse
+        PlayerHouse,
+        TownCenter
     }
 }

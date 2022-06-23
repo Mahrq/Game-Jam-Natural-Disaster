@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 2144877186561599286}
   m_Layer: 0
   m_Name: window4 (1)
-  m_TagString: Untagged
+  m_TagString: Atlas1
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -96,7 +96,7 @@ GameObject:
   - component: {fileID: 2144877186632182637}
   m_Layer: 0
   m_Name: window4
-  m_TagString: Untagged
+  m_TagString: Atlas1
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -400,7 +400,7 @@ GameObject:
   - component: {fileID: 509734854158612620}
   m_Layer: 0
   m_Name: window2 (15)
-  m_TagString: Untagged
+  m_TagString: Atlas1
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -483,7 +483,7 @@ GameObject:
   - component: {fileID: 509734853461206941}
   m_Layer: 0
   m_Name: window2 (14)
-  m_TagString: Untagged
+  m_TagString: Atlas1
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -643,7 +643,7 @@ GameObject:
   - component: {fileID: 3646835509652706149}
   m_Layer: 0
   m_Name: house1
-  m_TagString: Untagged
+  m_TagString: Atlas1
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -726,7 +726,7 @@ GameObject:
   - component: {fileID: 3936199625679037974}
   m_Layer: 0
   m_Name: window1 (2)
-  m_TagString: Untagged
+  m_TagString: Atlas1
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -809,7 +809,7 @@ GameObject:
   - component: {fileID: 2838334183720924717}
   m_Layer: 0
   m_Name: door2
-  m_TagString: Untagged
+  m_TagString: Atlas1
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -984,11 +984,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af2d563625d10654493c0d41d0a33ff1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _materialCollection:
-  - {fileID: 2100000, guid: ac9b7233e21d90d4d8598ef187cf5be7, type: 2}
+  _materialBuildModeStates:
   - {fileID: 2100000, guid: a6f4ad1623e6657408daad6c4cc1e1db, type: 2}
   - {fileID: 2100000, guid: dc5f387f76f827d42841d03959d10f8f, type: 2}
   - {fileID: 2100000, guid: 492ca6e63fb24d8418f93cdc558097c2, type: 2}
+  _materialCollection:
+  - {fileID: 2100000, guid: ac9b7233e21d90d4d8598ef187cf5be7, type: 2}
+  - {fileID: 2100000, guid: 0f7a53bb70706174ebaaae19884ff90c, type: 2}
 --- !u!114 &4839740137521252212
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1026,7 +1028,7 @@ GameObject:
   - component: {fileID: 8192470020248655023}
   m_Layer: 0
   m_Name: window3
-  m_TagString: Untagged
+  m_TagString: Atlas1
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1109,7 +1111,7 @@ GameObject:
   - component: {fileID: 8305926627602225857}
   m_Layer: 0
   m_Name: chimney2
-  m_TagString: Untagged
+  m_TagString: Atlas1
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1192,7 +1194,7 @@ GameObject:
   - component: {fileID: 8417393311151410401}
   m_Layer: 0
   m_Name: roof3
-  m_TagString: Untagged
+  m_TagString: Atlas1
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
