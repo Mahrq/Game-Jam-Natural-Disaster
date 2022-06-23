@@ -48,6 +48,27 @@ namespace Extensions
             result = 1 << index;
             return index;
         }
+        public static bool ArrayContentsAllEqual(int[] args1, int[] args2)
+        {
+            if (args1.Length == args2.Length)
+            {
+                int dataLength = args1.Length;
+                int flags = 0;
+                int alltrue = 0;
+                for (int i = 0; i < dataLength; i++)
+                {
+                    //Construct the all true variable;
+                    alltrue += 1 << i;
+                    if (args1[i] == args2[2])
+                    {
+                        //Only set the flag if the contents being compared are the same.
+                        flags += 1 << i;
+                    }
+                }
+                return flags == alltrue ? true : false;
+            }
+            return false;
+        }
 
     }
 }

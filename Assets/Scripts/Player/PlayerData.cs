@@ -1,8 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
-public class PlayerData : MonoBehaviour
+using UnityEngine.SceneManagement;
+public class PlayerData : MonoBehaviour, IMapableUI<PlayerData>
 {
     [SerializeField]
     [Range(1, 1000)]
@@ -18,15 +18,32 @@ public class PlayerData : MonoBehaviour
     [SerializeField]
     private int _food = 200;
     public int Food => _food;
+    [SerializeField]
+    [Range(100, 100000)]
+    private int _resourceCap = 99999;
+
+    public event IMapableUI<PlayerData>.MapToUIDelegate OnValueChanged;
 
     private void Awake()
     {
-        _population = new PlayerPopulation(_startingPopulation, _startingPopulation, _startingPopulation);
+        _population = new PlayerPopulation(_startingPopulation, _startingPopulation, _startingPopulation, _resourceCap);
+
+        SceneManager.sceneLoaded += OnSceneLoadedCallback;
+        Population.OnPopulationUpated += OnPopulationUpdatedCallbaclk;
+    }
+
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoadedCallback;
+        Population.OnPopulationUpated -= OnPopulationUpdatedCallbaclk;
     }
 
     public void AddFood(int amount)
     {
         _food += amount;
+        _food = Mathf.Clamp(_food, 0, _resourceCap);
+
+        OnValueChanged?.Invoke(this);
     }
 
     public void AddPayment(Vector3 amount)
@@ -34,6 +51,11 @@ public class PlayerData : MonoBehaviour
         _population.AddIdlePopulation((int)amount.x);
         _money += (int)amount.y;
         _buildMaterials += (int)amount.z;
+
+        _money = Mathf.Clamp(_money, 0, _resourceCap);
+        _buildMaterials = Mathf.Clamp(_buildMaterials, 0, _resourceCap);
+
+        OnValueChanged?.Invoke(this);
     }
 
     public PlayerPopulation Population
@@ -42,7 +64,7 @@ public class PlayerData : MonoBehaviour
         {
             if (_population == null)
             {
-                _population = new PlayerPopulation(_startingPopulation, _startingPopulation, _startingPopulation);
+                _population = new PlayerPopulation(_startingPopulation, _startingPopulation, _startingPopulation, _resourceCap);
             }
             return _population;
         }
@@ -53,5 +75,20 @@ public class PlayerData : MonoBehaviour
         {
             return new Vector3(Population.Idle, Money, BuildMaterials);
         }
+    }
+
+    private void OnSceneLoadedCallback(Scene scene, LoadSceneMode mode)
+    {
+        if (scene.name == "Test_Scene")
+        {
+            //Send event when the game scene is loaded so that the UI
+            //is updated at the start of the game.
+            OnValueChanged?.Invoke(this);
+        }
+    }
+
+    private void OnPopulationUpdatedCallbaclk()
+    {
+        OnValueChanged?.Invoke(this);
     }
 }
