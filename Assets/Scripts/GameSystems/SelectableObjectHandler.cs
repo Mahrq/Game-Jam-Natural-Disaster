@@ -31,8 +31,11 @@ public class SelectableObjectHandler : MonoBehaviour, ISelectableObject<Selectab
             case BuildModeBlueprintBehaviour.BuildingStage.Building:
                 break;
             case BuildModeBlueprintBehaviour.BuildingStage.Initialise:
-                Player.SelectedBuilding = Blueprint;
-                OnMouseLeftClick?.Invoke(this);
+                if (Player.State != PlayerController.ControllerState.BuildMode)
+                {
+                    Player.SelectedBuilding = Blueprint;
+                    OnMouseLeftClick?.Invoke(this);
+                }
                 break;
             default:
                 break;

@@ -12,7 +12,7 @@ public class BuildingEffect : ScriptableObject
     private bool _recursValue;
     public bool RecursValue => _recursValue;
     [SerializeField]
-    [Tooltip("Time in secounds when the effect is applied again")]
+    [Tooltip("Time in seconds when the effect is applied again")]
     [Range(1f, 60f)]
     private float _recurisonInterval;
     public float RecurisonInterval => _recurisonInterval;
@@ -42,7 +42,6 @@ public class BuildingEffect : ScriptableObject
                 break;
         }
     }
-
     public virtual void RemoveEffect(ref PlayerData playerData)
     {
         switch (Effect)

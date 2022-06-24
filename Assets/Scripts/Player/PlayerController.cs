@@ -12,15 +12,17 @@ public class PlayerController : MonoBehaviour, IMapableUI<BuildModeBlueprintBeha
     [SerializeField]
     private KeyCode _townCenterShortCut = KeyCode.T;
     private ControllerState _state = ControllerState.Free;
+    private ControllerState _previousState;
     private PrefabHolder _prefabHolder;
     private BuildModeBlueprintBehaviour _selectedObjectToBuild;
     private BuildModeBlueprintBehaviour _selectedBuilding;
-    
+    private bool _selectedFromButton = false;
+
     [SerializeField]
     private float _rayCastLength = 10000f;
     private Ray ray;
     private RaycastHit _rayHit;
-    Vector3 hitResult = Vector3.zero;
+    private Vector3 hitResult = Vector3.zero;
     private int _hitmask;
 
     public event IMapableUI<BuildModeBlueprintBehaviour>.MapToUIDelegate OnValueChanged;
@@ -31,6 +33,14 @@ public class PlayerController : MonoBehaviour, IMapableUI<BuildModeBlueprintBeha
         _prefabHolder = FindObjectOfType<PrefabHolder>();
 
         _hitmask = LayerMask.GetMask("Structure");
+    }
+    private void OnEnable()
+    {
+        CreateBuildingButton.OnCreateBuildingButtonClicked += OnCreateBuildingButtonClickedCallBack;
+    }
+    private void OnDisable()
+    {
+        CreateBuildingButton.OnCreateBuildingButtonClicked -= OnCreateBuildingButtonClickedCallBack;
     }
     private void Update()
     {
@@ -44,35 +54,49 @@ public class PlayerController : MonoBehaviour, IMapableUI<BuildModeBlueprintBeha
                 {
                     //Pre-emptivly change the layermask and recast the raycast so that when the blueprint spawns
                     //it won't jump from the last valid raycast result on the floor layer.
+                    _selectedFromButton = false;
                     _hitmask = LayerMask.GetMask("Floor");
                     hitResult = CursorToWorldSpace(ray, hitResult);
                     SetObjectToBuild(PrefabHolder.Item.PlayerHouse, hitResult);
                 }
                 else if (Input.GetKeyUp(_townCenterShortCut))
                 {
+                    _selectedFromButton = false;
                     _hitmask = LayerMask.GetMask("Floor");
                     hitResult = CursorToWorldSpace(ray, hitResult);
                     SetObjectToBuild(PrefabHolder.Item.TownCenter, hitResult);
                 }
                 break;
             case ControllerState.BuildMode:
+                //If a building is selected while trying to go into build mode via button click remove the selection first.
+                if (_selectedBuilding)
+                {
+                    _selectedBuilding.IsSelected = false;
+                    _selectedBuilding = null;
+                    OnDeselectedBuilding?.Invoke();
+                }
                 if (_selectedObjectToBuild != null)
                 {
                     _selectedObjectToBuild.SetPosition(hitResult);
                     //Confirm build position with left click
-                    if (Input.GetMouseButtonUp(0))
+                    //When choosing from a button click, it will skip the current frame the mouse released.
+                    if (!_selectedFromButton)
                     {
-                        //Attempt to build, if successful, releases the selected object.
-                        if (_selectedObjectToBuild.TryBuild())
+                        if (Input.GetMouseButtonUp(0))
                         {
-                            _selectedObjectToBuild = null;
+                            //Attempt to build, if successful, releases the selected object.
+                            if (_selectedObjectToBuild.TryBuild())
+                            {
+                                _selectedObjectToBuild = null;
+                            }
+                        }
+                        //Cancel build mode with right click
+                        else if (Input.GetMouseButtonUp(1))
+                        {
+                            _selectedObjectToBuild.CancelBuildMode();
                         }
                     }
-                    //Cancel build mode with right click
-                    else if (Input.GetMouseButtonUp(1))
-                    {
-                        _selectedObjectToBuild.CancelBuildMode();
-                    }
+                    _selectedFromButton = false;
                 }
                 else
                 {
@@ -132,6 +156,16 @@ public class PlayerController : MonoBehaviour, IMapableUI<BuildModeBlueprintBeha
         }
         return result;
     }
+    private void OnCreateBuildingButtonClickedCallBack(PrefabHolder.Item item)
+    {
+        if (State != ControllerState.BuildMode)
+        {
+            _hitmask = LayerMask.GetMask("Floor");
+            hitResult = CursorToWorldSpace(ray, hitResult);
+            _selectedFromButton = true;
+            SetObjectToBuild(item, hitResult);
+        }
+    }
     public BuildModeBlueprintBehaviour SelectedBuilding
     {
         set
@@ -149,14 +183,16 @@ public class PlayerController : MonoBehaviour, IMapableUI<BuildModeBlueprintBeha
         MenuMode,
         HasSelection
     }
+    public ControllerState PreviousState => _previousState;
     public ControllerState State
     {
         get
         {
             return _state;
         }
-        private set
+        set
         {
+            _previousState = _state;
             _state = value;
             switch (_state)
             {

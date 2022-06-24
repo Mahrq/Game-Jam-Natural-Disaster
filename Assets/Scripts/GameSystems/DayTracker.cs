@@ -27,7 +27,6 @@ public class DayTracker : MonoBehaviour
     public static event System.Action OnNewDay;
     public static event System.Action OnNewHour;
 
-
     private void Start()
     {
         MapTimeToUI();

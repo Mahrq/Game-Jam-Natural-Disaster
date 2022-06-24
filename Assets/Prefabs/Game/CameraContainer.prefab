@@ -51,6 +51,8 @@ MonoBehaviour:
   _panSpeed: 100
   _panBorderThreshold: 10
   _cameraBorderLimit: {x: 200, y: 200}
+  _zoomSpeed: 6000
+  _zoomLimit: {x: 50, y: 150}
 --- !u!1 &5656836305054416366
 GameObject:
   m_ObjectHideFlags: 0
