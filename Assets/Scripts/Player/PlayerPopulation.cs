@@ -25,7 +25,6 @@ public class PlayerPopulation
         _maxLimit = maxLimit;
         _populationCap = populationCap;
     }
-
     public void AddIdlePopulation(int amount)
     {
         _idle += amount;
@@ -37,10 +36,10 @@ public class PlayerPopulation
     {
         _idle += amount;
         _current += amount;
+        _idle = Mathf.Clamp(_idle, 0, _current);
         _current = Mathf.Clamp(_current, 0, _maxLimit);
 
         OnPopulationUpated?.Invoke();
-
     }
     public void AddMaxPopulationLimit(int amount)
     {

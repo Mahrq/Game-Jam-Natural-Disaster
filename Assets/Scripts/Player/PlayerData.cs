@@ -29,12 +29,14 @@ public class PlayerData : MonoBehaviour, IMapableUI<PlayerData>
         _population = new PlayerPopulation(_startingPopulation, _startingPopulation, _startingPopulation, _resourceCap);
 
         SceneManager.sceneLoaded += OnSceneLoadedCallback;
+        HungerTax.OnFoodTaxCalculated += HandleFoodRequired;
         Population.OnPopulationUpated += OnPopulationUpdatedCallbaclk;
     }
 
     private void OnDisable()
     {
         SceneManager.sceneLoaded -= OnSceneLoadedCallback;
+        HungerTax.OnFoodTaxCalculated -= HandleFoodRequired;
         Population.OnPopulationUpated -= OnPopulationUpdatedCallbaclk;
     }
 
@@ -86,9 +88,21 @@ public class PlayerData : MonoBehaviour, IMapableUI<PlayerData>
             OnValueChanged?.Invoke(this);
         }
     }
-
     private void OnPopulationUpdatedCallbaclk()
     {
         OnValueChanged?.Invoke(this);
+    }
+    private void HandleFoodRequired(int foodRequired, int foodRequiredPerDay)
+    {
+        AddFood(-foodRequired);
+        //Consequence for not having enough food kills some of the population
+        if (foodRequired > Food)
+        {
+            int shortageAmount = foodRequired - Food;
+            int amountStarved = shortageAmount / foodRequiredPerDay;
+            //ensures atleast 1 is killed if the result is 0, or if any remainders, it counts 1 up.
+            amountStarved++;
+            Population.AddCurrentPopulation(-amountStarved);
+        }
     }
 }
