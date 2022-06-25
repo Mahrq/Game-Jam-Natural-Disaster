@@ -14,7 +14,7 @@ public class BuildModeBlueprintBehaviour : MonoBehaviour, IMapableUI<Vector3>
     private BuildingProperties _buildingProperties;
     private bool _buildingEffectActivated = false;
     private BuildingMaterialHandler _buildingMaterialHandler;
-    private BuildingDamageHandler _damageHandler;
+    protected BuildingDamageHandler _damageHandler;
     private PlayerData _playerData;
     [SerializeField]
     [Tooltip("For buildings already active in the scene select 'Done'")]
@@ -56,7 +56,6 @@ public class BuildModeBlueprintBehaviour : MonoBehaviour, IMapableUI<Vector3>
             CurrentStage = BuildingStage.Initialise;
         }
     }
-
     private void OnDestroy()
     {
         if (_buildingEffectActivated)
@@ -152,7 +151,7 @@ public class BuildModeBlueprintBehaviour : MonoBehaviour, IMapableUI<Vector3>
         while (_buildingEffectActivated)
         {
             _buildingProperties.BuildingEffects[index].ApplyEffect(ref _playerData);
-            yield return new WaitForSecondsRealtime(interval);
+            yield return new WaitForSeconds(interval);
         }
     }
     private void RemoveBuildingEffects()

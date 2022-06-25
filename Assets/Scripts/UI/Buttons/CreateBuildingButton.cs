@@ -7,29 +7,29 @@ public class CreateBuildingButton : MonoBehaviour, IPointerEnterHandler, IPointe
 {
     [Header("Assign")]
     [SerializeField]
-    private BuildingProperties _buildingProperties;
+    protected BuildingProperties _buildingProperties;
     [SerializeField]
-    private GameObject _buildingDetailsToolTip;
+    protected GameObject _buildingDetailsToolTip;
     [SerializeField]
     private PrefabHolder.Item _toSpawn = PrefabHolder.Item.PlayerHouse;
     [SerializeField]
-    private Text _txtName;
+    protected Text _txtName;
     [SerializeField]
-    private Text _txtDescription;
+    protected Text _txtDescription;
     [SerializeField]
-    private Text _txtCostPopulation;
+    protected Text _txtCostPopulation;
     [SerializeField]
-    private Text _txtCostMoney;
+    protected Text _txtCostMoney;
     [SerializeField]
-    private Text _txtCostBuildingMaterial;
+    protected Text _txtCostBuildingMaterial;
     [SerializeField]
-    private float _toolTipOffsetX = 0f;
+    protected float _toolTipOffsetX = 0f;
     [SerializeField]
-    private float _toolTipOffsetY = 150f;
-    private Vector2 offsetVector;
+    protected float _toolTipOffsetY = 150f;
+    protected Vector2 offsetVector;
 
-    private RectTransform _rTransform;
-    private RectTransform _toolTipTransfrom;
+    protected RectTransform _rTransform;
+    protected RectTransform _toolTipTransfrom;
 
     public static event System.Action<PrefabHolder.Item> OnCreateBuildingButtonClicked;
     private void Awake()
@@ -46,29 +46,29 @@ public class CreateBuildingButton : MonoBehaviour, IPointerEnterHandler, IPointe
             _buildingDetailsToolTip.SetActive(false);
         }
     }
-    public void OnPointerEnter(PointerEventData eventData)
+    public virtual void OnPointerEnter(PointerEventData eventData)
     {
         if (!_buildingDetailsToolTip.activeInHierarchy)
         {
             MapDetailsToUI();
-            _toolTipTransfrom.parent = _rTransform;
+            _toolTipTransfrom.SetParent(_rTransform);
             _toolTipTransfrom.anchoredPosition = Vector2.zero + offsetVector;
             _buildingDetailsToolTip.SetActive(true);
         }
     }
 
-    public void OnPointerExit(PointerEventData eventData)
+    public virtual void OnPointerExit(PointerEventData eventData)
     {
         if (_buildingDetailsToolTip.activeInHierarchy)
         {
             _buildingDetailsToolTip.SetActive(false);
         }
     }
-    public void OnPointerClick(PointerEventData eventData)
+    public virtual void OnPointerClick(PointerEventData eventData)
     {
         OnCreateBuildingButtonClicked?.Invoke(_toSpawn);
     }
-    private void MapDetailsToUI()
+    protected virtual void MapDetailsToUI()
     {
         Vector3 cost = _buildingProperties.CostToBuild;
         _txtName.text = _buildingProperties.Name;
@@ -77,6 +77,4 @@ public class CreateBuildingButton : MonoBehaviour, IPointerEnterHandler, IPointe
         _txtCostMoney.text = $"{cost.y}";
         _txtCostBuildingMaterial.text = $"{cost.z}";
     }
-
-
 }

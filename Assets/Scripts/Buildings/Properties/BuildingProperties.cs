@@ -11,7 +11,7 @@ public class BuildingProperties : ScriptableObject
     [TextArea(10, 10)]
     private string _description;
     [SerializeField]
-    [Tooltip("Idle Population, Money, Build Materials")]
+    [Tooltip("Idle Population(x), Money(y), Building Materials(z)")]
     private Vector3 _costToBuild;
     [SerializeField]
     private int _maxHealth;
@@ -32,15 +32,4 @@ public class BuildingProperties : ScriptableObject
     public BuildingEffect[] BuildingEffects => _buildingEffects;
     public bool CanBuild(Vector3 payment) => payment.x >= _costToBuild.x && payment.y >= _costToBuild.y && payment.z >= _costToBuild.z;
     public BuildingActions AvailableActions => _availableActions;
-
-    [System.Flags]
-    public enum BuildingActions
-    {
-        None = 0,
-        SendWorker = 1,
-        RetrieveWorker = 1 << 1,
-        DestroyBuilding = 1 << 2,
-        RepairBuilding = 1 << 3,
-        IncreasePopulation = 1 << 4
-    }
 }

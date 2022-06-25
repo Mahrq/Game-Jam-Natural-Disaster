@@ -5,10 +5,12 @@ using Extensions;
 /// <summary>
 /// Handles various inputs and the game state of the player controller.
 /// </summary>
-public class PlayerController : MonoBehaviour, IMapableUI<BuildModeBlueprintBehaviour>
+public class PlayerController : MonoBehaviour
 {
     [SerializeField]
     private KeyCode _houseShortcut = KeyCode.Alpha1;
+    [SerializeField]
+    private KeyCode _resourceMineShortcut = KeyCode.Alpha2;
     [SerializeField]
     private KeyCode _townCenterShortCut = KeyCode.T;
     private ControllerState _state = ControllerState.Free;
@@ -16,6 +18,7 @@ public class PlayerController : MonoBehaviour, IMapableUI<BuildModeBlueprintBeha
     private PrefabHolder _prefabHolder;
     private BuildModeBlueprintBehaviour _selectedObjectToBuild;
     private BuildModeBlueprintBehaviour _selectedBuilding;
+    //private SelectableObjectHandler _mouseSelected;
     private bool _selectedFromButton = false;
 
     [SerializeField]
@@ -25,7 +28,6 @@ public class PlayerController : MonoBehaviour, IMapableUI<BuildModeBlueprintBeha
     private Vector3 hitResult = Vector3.zero;
     private int _hitmask;
 
-    public event IMapableUI<BuildModeBlueprintBehaviour>.MapToUIDelegate OnValueChanged;
     public event System.Action OnDeselectedBuilding;
 
     private void Awake()
@@ -58,6 +60,13 @@ public class PlayerController : MonoBehaviour, IMapableUI<BuildModeBlueprintBeha
                     _hitmask = LayerMask.GetMask("Floor");
                     hitResult = CursorToWorldSpace(ray, hitResult);
                     SetObjectToBuild(PrefabHolder.Item.PlayerHouse, hitResult);
+                }
+                else if (Input.GetKeyUp(_resourceMineShortcut))
+                {
+                    _selectedFromButton = false;
+                    _hitmask = LayerMask.GetMask("Floor");
+                    hitResult = CursorToWorldSpace(ray, hitResult);
+                    SetObjectToBuild(PrefabHolder.Item.ResourceMine, hitResult);
                 }
                 else if (Input.GetKeyUp(_townCenterShortCut))
                 {
@@ -172,10 +181,19 @@ public class PlayerController : MonoBehaviour, IMapableUI<BuildModeBlueprintBeha
         {
             _selectedBuilding = value;
             _selectedBuilding.IsSelected = true;
-            OnValueChanged?.Invoke(_selectedBuilding);
             State = ControllerState.HasSelection;
         }
     }
+    //public SelectableObjectHandler MouseSelected
+    //{
+    //    set
+    //    {
+    //        _mouseSelected = value;
+    //        _selectedBuilding = _mouseSelected.Blueprint;
+    //        _selectedBuilding.IsSelected = true;
+    //        State = ControllerState.HasSelection;
+    //    }
+    //}
     public enum ControllerState
     {
         Free,

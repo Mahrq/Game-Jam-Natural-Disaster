@@ -47,6 +47,7 @@ MonoBehaviour:
   _prefabCollection:
   - {fileID: 6291933597160426400, guid: b785182ef59b66d42b4beec453e6faa2, type: 3}
   - {fileID: 2087100577768051024, guid: f6e080daf1c2f2743ae10d9ec4c577fd, type: 3}
+  - {fileID: 3289715315074628082, guid: d7be2c9cc2d1f534b8733750525e19fa, type: 3}
 --- !u!1 &7671137667802649869
 GameObject:
   m_ObjectHideFlags: 0

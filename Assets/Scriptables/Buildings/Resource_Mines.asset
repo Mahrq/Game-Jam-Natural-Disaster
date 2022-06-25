@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a8b250f2ebb32904dbfedb379566875c, type: 3}
+  m_Name: Resource_Mines
+  m_EditorClassIdentifier: 
+  _name: Mineral Mines
+  _description: 'A mine full of building resources
+
+
+    Contains 300 building materials'
+  _costToBuild: {x: 5, y: 100, z: 0}
+  _maxHealth: 300
+  _buildTime: 30
+  _profilePicture: {fileID: 21300000, guid: 337565a98e7942d46b399244f15b3791, type: 3}
+  _buildingEffects: []
+  _availableActions: 15
+  _resourceAmount: 300
+  _isInfinite: 0
+  _workerCap: 5
+  _lockedEffects:
+  - {fileID: 11400000, guid: 56c12e9788dfed74fab6b92fdc10c0be, type: 2}
+  - {fileID: 11400000, guid: 56c12e9788dfed74fab6b92fdc10c0be, type: 2}
+  - {fileID: 11400000, guid: 56c12e9788dfed74fab6b92fdc10c0be, type: 2}
+  - {fileID: 11400000, guid: 56c12e9788dfed74fab6b92fdc10c0be, type: 2}
+  - {fileID: 11400000, guid: 56c12e9788dfed74fab6b92fdc10c0be, type: 2}
+  _workersRequiredPerLockedEffect: 1
