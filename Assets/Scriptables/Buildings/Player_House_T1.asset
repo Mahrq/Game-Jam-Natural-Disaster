@@ -20,5 +20,4 @@ MonoBehaviour:
   _profilePicture: {fileID: 21300000, guid: ca22b9bdc3ba45c49aa0acb60f8814f9, type: 3}
   _buildingEffects:
   - {fileID: 11400000, guid: 107ff3a6a3b48be4a9507294e8553f62, type: 2}
-  - {fileID: 11400000, guid: 1892b5a31b55b02409bba879473f1863, type: 2}
   _availableActions: 12

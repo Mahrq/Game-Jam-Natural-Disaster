@@ -94,7 +94,6 @@ public class PlayerData : MonoBehaviour, IMapableUI<PlayerData>
     }
     private void HandleFoodRequired(int foodRequired, int foodRequiredPerDay)
     {
-        AddFood(-foodRequired);
         //Consequence for not having enough food kills some of the population
         if (foodRequired > Food)
         {
@@ -103,6 +102,12 @@ public class PlayerData : MonoBehaviour, IMapableUI<PlayerData>
             //ensures atleast 1 is killed if the result is 0, or if any remainders, it counts 1 up.
             amountStarved++;
             Population.AddCurrentPopulation(-amountStarved);
+            _food %= foodRequiredPerDay;
+            AddFood(0);
+        }
+        else
+        {
+            AddFood(-foodRequired);
         }
     }
 }

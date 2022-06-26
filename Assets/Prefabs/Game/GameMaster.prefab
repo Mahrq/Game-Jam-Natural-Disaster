@@ -48,7 +48,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _txtCurrentDay: {fileID: 0}
   _txtCurrentTime: {fileID: 0}
-  _gameMinutes: 5
+  _gameMinutes: 0.05
 --- !u!114 &2931505629813876434
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -61,6 +61,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 638ac7e6a62b1d24ca8c88e74aa88a08, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _foodPerDay: 5
 --- !u!1 &5585807234697881536
 GameObject:
   m_ObjectHideFlags: 0
@@ -111,9 +112,9 @@ MonoBehaviour:
     _idle: 0
     _current: 0
     _maxLimit: 0
-  _money: 200
-  _buildMaterials: 200
-  _food: 200
+  _money: 150
+  _buildMaterials: 150
+  _food: 50
   _resourceCap: 99999
 --- !u!114 &2900568807062759372
 MonoBehaviour:
@@ -128,5 +129,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _houseShortcut: 49
+  _resourceMineShortcut: 50
   _townCenterShortCut: 116
   _rayCastLength: 10000

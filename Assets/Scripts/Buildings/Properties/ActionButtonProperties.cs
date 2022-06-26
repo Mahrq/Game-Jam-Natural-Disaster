@@ -21,4 +21,6 @@ public class ActionButtonProperties : ScriptableObject
     public string Description => _description;
     public Vector3 CostToActivate => _costToActivate;
     public float ActivationDelay => _activationDelay;
+
+    public bool CanAffordCost(Vector3 payment) => payment.x >= _costToActivate.x && payment.y >= _costToActivate.y && payment.z >= _costToActivate.z;
 }

@@ -32,14 +32,14 @@ public class CreateBuildingButton : MonoBehaviour, IPointerEnterHandler, IPointe
     protected RectTransform _toolTipTransfrom;
 
     public static event System.Action<PrefabHolder.Item> OnCreateBuildingButtonClicked;
-    private void Awake()
+    protected virtual void Awake()
     {
         _rTransform = this.GetComponent<RectTransform>();
         _toolTipTransfrom = _buildingDetailsToolTip.GetComponent<RectTransform>();
         offsetVector = new Vector2(_toolTipOffsetX, _toolTipOffsetY);
     }
 
-    private void OnEnable()
+    protected virtual void OnEnable()
     {
         if (_buildingDetailsToolTip.activeInHierarchy)
         {

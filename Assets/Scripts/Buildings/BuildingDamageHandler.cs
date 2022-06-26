@@ -56,4 +56,5 @@ public class BuildingDamageHandler : MonoBehaviour, IDamageable, IMapableUI<Vect
     }
 
     public int CurrentHealth => _currentHealth;
+    public bool CanRepair() => _currentHealth != _properties.MaxHealth;
 }

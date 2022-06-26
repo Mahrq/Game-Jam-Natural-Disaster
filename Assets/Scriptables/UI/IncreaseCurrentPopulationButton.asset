@@ -18,4 +18,4 @@ MonoBehaviour:
 
     10(s)'
   _costToActivate: {x: 0, y: 15, z: 0}
-  _activationDelay: 10
+  _activationDelay: 0

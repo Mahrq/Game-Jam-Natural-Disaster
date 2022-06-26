@@ -12,12 +12,15 @@ public class DebugWindowUI : MonoBehaviour
     private Text _txtPlayerControllerState;
     [SerializeField]
     private Text _txtCameraDistanceFromTarget;
+    [SerializeField]
+    private Text _txtPreservedTimerListAmount;
     private PlayerController _playerController;
-
+    private SelectedDisplayButtonsUI _buttonDisplay;
 
     private void Awake()
     {
         _playerController = FindObjectOfType<PlayerController>();
+        _buttonDisplay = FindObjectOfType<SelectedDisplayButtonsUI>();
     }
 
     private void Update()
@@ -25,5 +28,6 @@ public class DebugWindowUI : MonoBehaviour
         float camDistance = Vector3.Distance(_camTargetTransform.position, _camTransform.position);
         _txtPlayerControllerState.text = $"Controller State: {_playerController.State}";
         _txtCameraDistanceFromTarget.text = "Camera Distance From Target: " + camDistance.ToString("F00");
+        _txtPreservedTimerListAmount.text = $"Preserved Timers Count: {_buttonDisplay.PreservedTimers.Count}";
     }
 }

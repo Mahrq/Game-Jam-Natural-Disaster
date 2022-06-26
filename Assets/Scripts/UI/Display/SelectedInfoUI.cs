@@ -76,15 +76,16 @@ public class SelectedInfoUI : MonoBehaviour
             //Map the health to health bar
             MapHealthToUI(healthData);
             //Toggle the action buttons
-            _buttonDisplayer.ToggleButtons(currentActions);
+            _buttonDisplayer.ToggleButtons(currentActions, _selectedObjectData);
             if (_selectedBuildingResource != null)
             {
+                _selectedBuildingResource.OnValueChanged += MapResourceToUI;
                 //resource Data: current workers(x), worker cap(y), resources left (z)
                 Vector3 resourceData = new Vector3(_selectedBuildingResource.CurrentWorkers, 
                                                     _selectedBuildingResource.R_Properties.WorkerCap,
                                                     _selectedBuildingResource.CurrentResourceAmount);
                 //Map the workers and resource left
-                MapResourceToUI(resourceData, _selectedBuildingResource.ResourceLabel);
+                MapResourceToUI(resourceData);
             }
             else
             {
@@ -107,6 +108,10 @@ public class SelectedInfoUI : MonoBehaviour
         _buttonDisplayer.ClearButtons();
         _selectedBuilding.DamageHandler.OnValueChanged -= MapHealthToUI;
         _selectedBuilding.DamageHandler.OnDeath -= OnDeselectedBuildingCallback;
+        if (_selectedBuildingResource != null)
+        {
+            _selectedBuildingResource.OnValueChanged -= MapResourceToUI;
+        }
         _imgProfilePicture.sprite = _defaultProfilePicture;
         _selectedBuilding = null;
         _selectedBuildingResource = null;
@@ -123,8 +128,9 @@ public class SelectedInfoUI : MonoBehaviour
         _imgProfileHealthBar.fillAmount = result;
     }
 
-    private void MapResourceToUI(Vector3 resourceDetails, PlayerEconomy economyType)
+    private void MapResourceToUI(Vector3 resourceDetails)
     {
+        PlayerEconomy economyType = _selectedBuildingResource.ResourceLabel;
         _txtProfileWorkerCount.text = $"{resourceDetails.x}    /    {resourceDetails.y}";
         _txtCurrentResourceAmount.text = $"{resourceDetails.z}";
 
@@ -151,6 +157,10 @@ public class SelectedInfoUI : MonoBehaviour
 
     public SelectableObjectHandler SelectedObjectData
     {
+        get
+        {
+            return _selectedObjectData;
+        }
         set
         {
             _selectedObjectData = value;

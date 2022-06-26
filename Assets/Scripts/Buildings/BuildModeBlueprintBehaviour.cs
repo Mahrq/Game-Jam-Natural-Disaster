@@ -14,7 +14,7 @@ public class BuildModeBlueprintBehaviour : MonoBehaviour, IMapableUI<Vector3>
     private BuildingProperties _buildingProperties;
     private bool _buildingEffectActivated = false;
     private BuildingMaterialHandler _buildingMaterialHandler;
-    protected BuildingDamageHandler _damageHandler;
+    private BuildingDamageHandler _damageHandler;
     private PlayerData _playerData;
     [SerializeField]
     [Tooltip("For buildings already active in the scene select 'Done'")]
@@ -30,10 +30,10 @@ public class BuildModeBlueprintBehaviour : MonoBehaviour, IMapableUI<Vector3>
     [Tooltip("Time in frames when the next Value Changed interval is called.")]
     private int _valueChangedEventSendInterval = 5;
     private Vector3 _progressBarMapData;
-
     public event IMapableUI<Vector3>.MapToUIDelegate OnValueChanged;
     public event System.Action OnInitialise;
     public event System.Action<bool> OnSelectionChanged;
+    public event System.Action OnDeathPrep;
     private bool _isSelected = false;
     private void Awake()
     {
@@ -176,6 +176,7 @@ public class BuildModeBlueprintBehaviour : MonoBehaviour, IMapableUI<Vector3>
     private void OnDeathCallback()
     {
         //TODO: special FX for death otherwise it's same as normal destruction;
+        OnDeathPrep?.Invoke();
         Destroy(this.gameObject);
     }
     public void SetPosition(Vector3 position)
@@ -300,6 +301,7 @@ public class BuildModeBlueprintBehaviour : MonoBehaviour, IMapableUI<Vector3>
             return _damageHandler;
         }
     }
+    public int ID => GetInstanceID();
     public enum BuildingStage
     {
         Preparing,

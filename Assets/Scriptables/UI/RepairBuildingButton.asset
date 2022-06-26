@@ -13,12 +13,9 @@ MonoBehaviour:
   m_Name: RepairBuildingButton
   m_EditorClassIdentifier: 
   _name: Repair
-  _description: 'Restores building hp by expending resources.
-
-
-    Heal + 100
+  _description: 'Heal + 100
 
 
     10(s)'
   _costToActivate: {x: 0, y: 5, z: 5}
-  _activationDelay: 10
+  _activationDelay: 0

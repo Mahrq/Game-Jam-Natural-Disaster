@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1885dbd5d96b25943819616d5cd66405, type: 3}
   m_Name: Continuous BuildingMaterial T1
   m_EditorClassIdentifier: 
-  _effect: 0
-  _value: 5
+  _effect: 3
+  _value: 1
   _recursValue: 1
-  _recurisonInterval: 10
+  _recurisonInterval: 5
